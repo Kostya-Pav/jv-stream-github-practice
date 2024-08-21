@@ -1,9 +1,14 @@
 package practice;
 
-import java.util.Collections;
-import java.util.List;
 import model.Candidate;
 import model.Person;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Function;
+
+import static java.lang.Integer.MAX_VALUE;
 
 public class StreamPractice {
     /**
@@ -13,8 +18,28 @@ public class StreamPractice {
      * If there is no needed data throw RuntimeException with message
      * "Can't get min value from list: < Here is our input 'numbers' >"
      */
+    private Function<String, Integer> function = new Function<>() {
+        @Override
+        public Integer apply(String s) {
+            String[] oneInput = s.split(",");
+            int minElement = MAX_VALUE;
+            try {
+                minElement = Arrays.stream(oneInput)
+                        .mapToInt(a -> Integer.parseInt(a.trim()))
+                        .filter(a -> a % 2 == 0)
+                        .min().orElseThrow();
+            } catch (RuntimeException e) {
+                new RuntimeException("Can't get min value from list: method_input_list");
+            }
+            return minElement;
+        }
+    };
+
     public int findMinEvenNumber(List<String> numbers) {
-        return 0;
+        return numbers.stream()
+                .mapToInt(n -> function.apply(n))
+                .min().orElseThrow(()
+                        -> new RuntimeException("Can't get min value from list: numbers_list"));
     }
 
     /**
