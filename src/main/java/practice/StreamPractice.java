@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static java.lang.Integer.MAX_VALUE;
@@ -22,20 +23,13 @@ public class StreamPractice {
      * If there is no needed data throw RuntimeException with message
      * "Can't get min value from list: < Here is our input 'numbers' >"
      */
-    private Function<String, Integer> processingOneInput = new Function<>() {
-        @Override
-        public Integer apply(String s) {
-            String[] oneInput = s.split(",");
-            return Arrays.stream(oneInput)
-                    .mapToInt(a -> Integer.parseInt(a.trim()))
-                    .filter(a -> a % 2 == 0)
-                    .min().orElse(MAX_VALUE);
-        }
-    };
-
     public int findMinEvenNumber(List<String> numbers) {
         return numbers.stream()
-                .mapToInt(n -> processingOneInput.apply(n))
+                .flatMap(number-> Arrays.stream(number.split(",")))
+                .toList()
+                .stream()
+                .mapToInt(a -> Integer.parseInt(a.trim()))
+                .filter(a -> a % 2 == 0)
                 .min()
                 .orElseThrow(() -> new RuntimeException("Can't get min value from list"));
     }
