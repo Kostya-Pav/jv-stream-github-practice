@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 
 import static java.lang.Integer.MAX_VALUE;
 
@@ -18,6 +19,18 @@ public class StreamPractice {
      * If there is no needed data throw RuntimeException with message
      * "Can't get min value from list: < Here is our input 'numbers' >"
      */
+//    private Function<String, ArrayList<Integer>> convertToArray = new Function<>() {
+//        @Override
+//        public ArrayList<Integer> apply(String s) {
+//            String[] oneInput = s.split(",");
+//            ArrayList<Integer> result = new ArrayList<>();
+//            for (String string : oneInput) {
+//                result.add(Integer.valueOf(string));
+//            }
+//            return result;
+//        }
+//    };
+
     private Function<String, Integer> function = new Function<>() {
         @Override
         public Integer apply(String s) {
@@ -38,8 +51,9 @@ public class StreamPractice {
     public int findMinEvenNumber(List<String> numbers) {
         return numbers.stream()
                 .mapToInt(n -> function.apply(n))
-                .min().orElseThrow(()
-                        -> new RuntimeException("Can't get min value from list: numbers_list"));
+                .summaryStatistics()
+                .getMin();
+
     }
 
     /**
@@ -47,8 +61,12 @@ public class StreamPractice {
      * return the average of all odd numbers from the list or throw NoSuchElementException.
      * But before that subtract 1 from each element on an odd position (having the odd index).
      */
-    public Double getOddNumsAverage(List<Integer> numbers) {
-        return 0D;
+    public double getOddNumsAverage(List<Integer> numbers) {
+            return  IntStream.range(0, numbers.size())
+                    .mapToDouble(index -> index % 2 != 0 ? numbers.get(index) - 1 : numbers.get(index))
+                    .filter(number -> number % 2 != 0)
+                    .average()
+                    .orElseThrow();
     }
 
     /**
