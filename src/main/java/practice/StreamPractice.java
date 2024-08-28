@@ -7,11 +7,8 @@ import model.Person;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static java.lang.Integer.MAX_VALUE;
 import static model.Person.Sex.MAN;
 import static model.Person.Sex.WOMAN;
 
@@ -26,10 +23,8 @@ public class StreamPractice {
     public int findMinEvenNumber(List<String> numbers) {
         return numbers.stream()
                 .flatMap(number-> Arrays.stream(number.split(",")))
-                .toList()
-                .stream()
-                .mapToInt(a -> Integer.parseInt(a.trim()))
-                .filter(a -> a % 2 == 0)
+                .mapToInt(number -> Integer.parseInt(number.trim()))
+                .filter(number -> number % 2 == 0)
                 .min()
                 .orElseThrow(() -> new RuntimeException("Can't get min value from list"));
     }
@@ -74,11 +69,15 @@ public class StreamPractice {
     public List<Person> getWorkablePeople(int fromAge, int femaleToAge,
                                           int maleToAge, List<Person> peopleList) {
         return peopleList.stream()
-                .filter(person -> person.getSex().equals(MAN)
-                        && fromAge <= person.getAge() && person.getAge() <= maleToAge ||
-                        person.getSex().equals(WOMAN)
-                                && fromAge <= person.getAge() && person.getAge() <= femaleToAge)
+                .filter(person -> filterWomanOrManWhithAge(fromAge, femaleToAge, maleToAge, person))
                 .toList();
+    }
+
+    private static boolean filterWomanOrManWhithAge(int fromAge, int femaleToAge, int maleToAge, Person person) {
+        return person.getSex().equals(MAN)
+                && fromAge <= person.getAge() && person.getAge() <= maleToAge ||
+                person.getSex().equals(WOMAN)
+                        && fromAge <= person.getAge() && person.getAge() <= femaleToAge;
     }
 
     /**
